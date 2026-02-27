@@ -1,12 +1,33 @@
 const create = async (user) => {
   try {
-    let response = await fetch('/api/users/', {
+    let response = await fetch('/api/users', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(user)
+    })
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) {
+      return { error: data.error || `Request failed (${response.status})` }
+    }
+    return data
+  } catch (err) {
+    console.error(err)
+    return { error: 'Network error. Please try again.' }
+  }
+}
+
+const verifyEmail = async (verificationToken, code) => {
+  try {
+    let response = await fetch('/api/users/verify-email', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ verificationToken, code })
     })
     return await response.json()
   } catch(err) {
@@ -127,6 +148,7 @@ const findPeople = async (params, credentials, signal) => {
 
 export {
   create,
+  verifyEmail,
   list,
   read,
   update,

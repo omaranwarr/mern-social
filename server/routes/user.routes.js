@@ -6,7 +6,10 @@ const router = express.Router()
 
 router.route('/api/users')
   .get(userCtrl.list)
-  .post(userCtrl.create)
+  .post(userCtrl.signupRequest)
+
+router.route('/api/users/verify-email')
+  .post(userCtrl.verifyEmailAndSignup)
 
 router.route('/api/users/photo/:userId')
   .get(userCtrl.photo, userCtrl.defaultPhoto)

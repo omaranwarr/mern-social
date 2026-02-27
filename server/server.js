@@ -14,4 +14,9 @@ app.listen(config.port, (err) => {
     console.log(err)
   }
   console.info('Server started on port %s.', config.port)
+  if (config.smtpUser && config.smtpHost) {
+    console.info('Email: using SMTP (%s) – verification emails will be sent to users.', config.smtpHost)
+  } else {
+    console.info('Email: using Ethereal (test inbox). To send real emails, add SMTP_HOST, SMTP_USER, SMTP_PASS to a .env file in the project root and restart.')
+  }
 })
