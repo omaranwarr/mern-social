@@ -117,9 +117,11 @@ export default function Post (props){
             className={classes.cardHeader}
           />
         <CardContent className={classes.cardContent}>
-          <Typography component="p" className={classes.text}>
-            {props.post.text}
-          </Typography>
+          {props.post.text && (
+            <Typography component="p" className={classes.text}>
+              {props.post.text}
+            </Typography>
+          )}
           {props.post.photo &&
             (<div className={classes.photo}>
               <img
