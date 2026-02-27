@@ -19,6 +19,21 @@ A simple social media application with users, posts, likes and comments - develo
    - To install dependencies, run ```  npm install  ``` or ``` yarn ```
    - To run the application for development, run ```  npm run development  ``` or ``` yarn development ```
 4. Open [localhost:3000](http://localhost:3000/) in the browser
+
+#### Run tests
+With MongoDB running locally: `npm test`. Tests use the database `mernproject_test` and cover the signup and email-verification API.
+
+#### Email verification (2FA at signup)
+Signup requires verifying your email with a 6-digit code sent to your inbox.
+
+- **Test mode (no setup):** If you don't set SMTP, the app uses [Ethereal](https://ethereal.email/) (fake inbox). Check the **server console** for `Ethereal preview URL` and open it to see the code.
+- **Real email (e.g. Gmail):**
+  1. Copy `.env.example` to `.env` in the project root.
+  2. In `.env`, set your SMTP variables. For **Gmail**:
+     - Turn on 2-Step Verification for your Google account, then create an [App Password](https://myaccount.google.com/apppasswords) (16 characters).
+     - Use: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`, `SMTP_USER=your@gmail.com`, `SMTP_PASS=your_16_char_app_password`, `SMTP_FROM="MERN Social <your@gmail.com>"`.
+  3. Restart the server (`npm run development`). Verification emails will be sent to the address the user enters at signup.
+
 ---- 
 ### More applications built using this stack
 

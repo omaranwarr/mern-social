@@ -6,7 +6,14 @@ const config = {
     process.env.MONGO_HOST ||
     'mongodb://' + (process.env.IP || 'localhost') + ':' +
     (process.env.MONGO_PORT || '27017') +
-    '/mernproject'
+    '/mernproject',
+  // Email (2FA verification). If not set, Ethereal test account is used in development.
+  smtpHost: process.env.SMTP_HOST,
+  smtpPort: process.env.SMTP_PORT || 587,
+  smtpSecure: process.env.SMTP_SECURE || 'false',
+  smtpUser: process.env.SMTP_USER,
+  smtpPass: process.env.SMTP_PASS,
+  smtpFrom: process.env.SMTP_FROM
 }
 
 export default config

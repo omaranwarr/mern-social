@@ -67,14 +67,12 @@ export default function Signin(props) {
     setValues({ ...values, [name]: event.target.value })
   }
 
-  const {from} = props.location.state || {
-      from: {
-        pathname: '/'
-      }
+  const { from, message } = props.location.state || {
+      from: { pathname: '/' }
   }
-  const {redirectToReferrer} = values
-    if (redirectToReferrer) {
-      return (<Redirect to={from}/>)
+  const { redirectToReferrer } = values
+  if (redirectToReferrer) {
+    return (<Redirect to={from}/>)
   }
 
   return (
@@ -83,6 +81,11 @@ export default function Signin(props) {
           <Typography variant="h6" className={classes.title}>
             Sign In
           </Typography>
+          {message && (
+            <Typography color="primary" style={{ marginBottom: 8 }}>
+              {message}
+            </Typography>
+          )}
           <TextField id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/><br/>
           <TextField id="password" type="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/>
           <br/> {
