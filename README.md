@@ -20,6 +20,9 @@ A simple social media application with users, posts, likes and comments - develo
    - To run the application for development, run ```  npm run development  ``` or ``` yarn development ```
 4. Open [localhost:3000](http://localhost:3000/) in the browser
 
+#### Run tests
+With MongoDB running locally: `npm test`. Tests use the database `mernproject_test` and cover the signup and email-verification API.
+
 #### Email verification (2FA at signup)
 Signup requires verifying your email with a 6-digit code sent to your inbox.
 
