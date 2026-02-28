@@ -30,11 +30,12 @@ const getErrorMessage = (err) => {
             default:
                 message = 'Something went wrong'
         }
-    } else {
+    } else if (err.errors) {
         for (let errName in err.errors) {
             if (err.errors[errName].message) message = err.errors[errName].message
         }
     }
+    if (!message && err.message) message = err.message
 
     return message
 }

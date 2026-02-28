@@ -124,7 +124,7 @@ export default function NewPost (props){
         }
       </CardContent>
       <CardActions>
-        <Button color="primary" variant="contained" disabled={values.text === ''} onClick={clickPost} className={classes.submit}>POST</Button>
+        <Button color="primary" variant="contained" disabled={values.text === '' && !values.photo} onClick={clickPost} className={classes.submit}>POST</Button>
       </CardActions>
     </Card>
   </div>)
