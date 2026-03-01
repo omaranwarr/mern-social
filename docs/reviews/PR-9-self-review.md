@@ -1,8 +1,5 @@
 # Self-review: Email verification (2FA) at signup
 
-> **Solo project requirement:** Rename this file to `PR-<number>-self-review.md` once you open the PR and know the PR number (e.g. `PR-42-self-review.md`).
-
----
 
 ## 1. What changed and why?
 
