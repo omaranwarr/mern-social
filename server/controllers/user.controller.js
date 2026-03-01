@@ -2,6 +2,7 @@ import User from '../models/user.model'
 import PendingSignup from '../models/pendingSignup.model'
 import extend from 'lodash/extend'
 import errorHandler from './../helpers/dbErrorHandler'
+import { sanitizeString } from './../helpers/sanitize'
 import formidable from 'formidable'
 import fs from 'fs'
 import crypto from 'crypto'
@@ -46,7 +47,7 @@ const signupRequest = async (req, res) => {
     await PendingSignup.deleteMany({ email: email.trim().toLowerCase() })
 
     const pending = new PendingSignup({
-      name: name.trim(),
+      name: sanitizeString(name.trim()),
       email: email.trim().toLowerCase(),
       hashed_password,
       salt,
@@ -184,6 +185,8 @@ const update = (req, res) => {
         error: "Photo could not be uploaded"
       })
     }
+    if (fields.name != null) fields.name = sanitizeString(fields.name)
+    if (fields.about != null) fields.about = sanitizeString(fields.about)
     let user = req.profile
     user = extend(user, fields)
     user.updated = Date.now()

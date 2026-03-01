@@ -1,5 +1,6 @@
 import Post from '../models/post.model'
 import errorHandler from './../helpers/dbErrorHandler'
+import { sanitizeString } from './../helpers/sanitize'
 import formidable from 'formidable'
 import fs from 'fs'
 
@@ -12,6 +13,7 @@ const create = (req, res, next) => {
         error: "Image could not be uploaded"
       })
     }
+    if (fields.text != null) fields.text = sanitizeString(fields.text)
     let post = new Post(fields)
     post.postedBy= req.profile
     if(files.photo){
@@ -118,6 +120,7 @@ const unlike = async (req, res) => {
 
 const comment = async (req, res) => {
   let comment = req.body.comment
+  if (comment && comment.text != null) comment.text = sanitizeString(comment.text)
   comment.postedBy = req.body.userId
   try{
     let result = await Post.findByIdAndUpdate(req.body.postId, {$push: {comments: comment}}, {new: true})
