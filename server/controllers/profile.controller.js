@@ -7,9 +7,6 @@ import fs from 'fs'
 import profileImage from './../../client/assets/images/profile-pic.png'
 import { findUserProfileById } from '../services/user.service'
 
-/**
- * Load user and append to req.
- */
 const userByID = async (req, res, next, id) => {
   try {
     let user = await findUserProfileById(id)

@@ -83,7 +83,7 @@ const hasAuthorization = (req, res, next) => {
 }
 
 /**
- * Request signup: create pending signup, send 2FA code to email, return verification token.
+ * Request signup: create pending signup, send 2FA code to email, return verification token
  */
 const signupRequest = async (req, res) => {
   const validated = validateSignupRequest(req.body)
@@ -129,7 +129,7 @@ const signupRequest = async (req, res) => {
 }
 
 /**
- * Verify email with code and complete signup (create user).
+ * Verify email with code and complete signup (create user)
  */
 const verifyEmailAndSignup = async (req, res) => {
   const { verificationToken: rawToken, code: rawCode } = req.body || {}
