@@ -33,7 +33,7 @@ async function getTransporter() {
  * Send verification code to email.
  * @param {string} to - Recipient email
  * @param {string} code - 6-digit verification code
- * @returns {{ success: boolean, messageId?: string, previewUrl?: string }}
+ * @returns {Promise<{ success: boolean, messageId?: string, previewUrl?: string }>}
  */
 export async function sendVerificationEmail(to, code) {
   try {
