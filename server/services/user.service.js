@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import crypto from 'node:crypto'
 import User from '../models/user.model'
 import PendingSignup from '../models/pendingSignup.model'
 import { sanitizeString } from '../helpers/sanitize'
