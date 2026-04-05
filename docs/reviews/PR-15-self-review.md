@@ -11,4 +11,6 @@
 
 **Routes:** `server/routes/user.routes.js` and `server/routes/post.routes.js` import the new controllers; `router.param('userId', …)` uses `profileCtrl.userByID`.
 
-**Outcome:** `npm test` — 17/17 passing; intended HTTP behavior unchanged.
+**Sonar S5147 (NoSQL / `verifyEmailAndSignup`):** `parseVerifyEmailInput` in `server/services/user.service.js` ensures `verificationToken` and `code` are plain strings matching expected shapes (64-char hex token, 6-digit code) before `PendingSignup.findOne`; rejects non-strings and malformed input so queries are not built from raw user-controlled objects.
+
+**Outcome:** `npm test` — 17/17 passing; valid signup/verify flow unchanged.
