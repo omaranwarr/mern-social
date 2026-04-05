@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-import crypto from 'crypto'
+import { BCRYPT_SALT_MARKER, hashPasswordSync, verifyPasswordSync } from '../auth/password'
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -57,21 +58,15 @@ UserSchema.path('hashed_password').validate(function(v) {
 
 UserSchema.methods = {
   authenticate: function(plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
+    return verifyPasswordSync(plainText, this.hashed_password, this.salt)
   },
   encryptPassword: function(password) {
     if (!password) return ''
-    try {
-      return crypto
-        .createHmac('sha1', this.salt)
-        .update(password)
-        .digest('hex')
-    } catch (err) {
-      return ''
-    }
+    const { hashed_password } = hashPasswordSync(password)
+    return hashed_password
   },
   makeSalt: function() {
-    return Math.round((new Date().valueOf() * Math.random())) + ''
+    return BCRYPT_SALT_MARKER
   }
 }
 

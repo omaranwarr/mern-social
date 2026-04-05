@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import User from '../models/user.model'
 import PendingSignup from '../models/pendingSignup.model'
 import { sanitizeString } from '../helpers/sanitize'
+import { hashPasswordSync } from '../auth/password'
 
 export const CODE_EXPIRY_MINUTES = 10
 export const CODE_LENGTH = 6
@@ -79,9 +80,7 @@ export function generateVerificationToken() {
 }
 
 export function hashPasswordWithSalt(password) {
-  const salt = Math.round((new Date().valueOf() * Math.random())) + ''
-  const hashed_password = crypto.createHmac('sha1', salt).update(password).digest('hex')
-  return { salt, hashed_password }
+  return hashPasswordSync(password)
 }
 
 export async function findUserProfileById(id) {
