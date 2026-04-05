@@ -10,7 +10,8 @@ import {
   CODE_EXPIRY_MINUTES,
   generateVerificationCode,
   generateVerificationToken,
-  hashPasswordWithSalt
+  hashPasswordWithSalt,
+  parseVerifyEmailInput
 } from '../services/user.service'
 
 const signin = async (req, res) => {
@@ -133,15 +134,19 @@ const signupRequest = async (req, res) => {
  * Verify email with code and complete signup (create user).
  */
 const verifyEmailAndSignup = async (req, res) => {
-  const { verificationToken, code } = req.body || {}
-  if (!verificationToken || !code) {
+  const { verificationToken: rawToken, code: rawCode } = req.body || {}
+  if (rawToken === undefined || rawToken === null || rawCode === undefined || rawCode === null) {
     return res.status(400).json({ error: 'Verification token and code are required.' })
+  }
+  const parsed = parseVerifyEmailInput(rawToken, rawCode)
+  if (!parsed) {
+    return res.status(400).json({ error: 'Invalid or expired code. Please sign up again.' })
   }
 
   try {
     const pending = await PendingSignup.findOne({
-      verificationToken,
-      verificationCode: code.trim()
+      verificationToken: parsed.token,
+      verificationCode: parsed.code
     })
     if (!pending) {
       return res.status(400).json({ error: 'Invalid or expired code. Please sign up again.' })
