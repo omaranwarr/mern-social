@@ -5,6 +5,7 @@ import expressJwt from 'express-jwt'
 import config from './../../config/config'
 import errorHandler from './../helpers/dbErrorHandler'
 import { sendVerificationEmail } from '../helpers/email'
+import { hashPasswordSync, isBcryptHash } from '../auth/password'
 import {
   buildPendingSignup,
   ensureEmailNotTaken,
@@ -29,6 +30,13 @@ const signin = async (req, res) => {
       return res.status('401').send({
         error: "Email and password don't match."
       })
+    }
+
+    if (!isBcryptHash(user.hashed_password)) {
+      const { hashed_password, salt } = hashPasswordSync(req.body.password)
+      user.hashed_password = hashed_password
+      user.salt = salt
+      await user.save()
     }
 
     const token = jwt.sign({
@@ -75,7 +83,7 @@ const hasAuthorization = (req, res, next) => {
 }
 
 /**
- * Request signup: create pending signup, send 2FA code to email, return verification token.
+ * Request signup: create pending signup, send 2FA code to email, return verification token
  */
 const signupRequest = async (req, res) => {
   const validated = validateSignupRequest(req.body)
@@ -121,7 +129,7 @@ const signupRequest = async (req, res) => {
 }
 
 /**
- * Verify email with code and complete signup (create user).
+ * Verify email with code and complete signup (create user)
  */
 const verifyEmailAndSignup = async (req, res) => {
   const { verificationToken: rawToken, code: rawCode } = req.body || {}

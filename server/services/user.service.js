@@ -2,13 +2,11 @@ import crypto from 'crypto'
 import User from '../models/user.model'
 import PendingSignup from '../models/pendingSignup.model'
 import { sanitizeString } from '../helpers/sanitize'
+import { hashPasswordSync } from '../auth/password'
 
 export const CODE_EXPIRY_MINUTES = 10
 export const CODE_LENGTH = 6
 
-/**
- * @returns {{ ok: true, name: string, email: string, password: string } | { ok: false, error: string }}
- */
 export function validateSignupRequest(body) {
   if (!body || typeof body !== 'object') {
     return { ok: false, error: 'Name, email and password are required.' }
@@ -50,11 +48,6 @@ export async function persistPendingSignup(normalizedEmail, pendingDoc) {
   await pendingDoc.save()
 }
 
-/**
- * Safe values for PendingSignup.findOne (strings only; blocks NoSQL operator injection).
- * Token: 64 hex chars (generateVerificationToken). Code: CODE_LENGTH digits.
- * @returns {{ token: string, code: string } | null}
- */
 export function parseVerifyEmailInput(rawToken, rawCode) {
   if (typeof rawToken !== 'string' || typeof rawCode !== 'string') {
     return null
@@ -79,9 +72,7 @@ export function generateVerificationToken() {
 }
 
 export function hashPasswordWithSalt(password) {
-  const salt = Math.round((new Date().valueOf() * Math.random())) + ''
-  const hashed_password = crypto.createHmac('sha1', salt).update(password).digest('hex')
-  return { salt, hashed_password }
+  return hashPasswordSync(password)
 }
 
 export async function findUserProfileById(id) {
