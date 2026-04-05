@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { Route, Redirect } from 'react-router-dom'
 import auth from './auth-helper'
 
@@ -14,5 +15,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
     )
   )}/>
 )
+
+PrivateRoute.propTypes = {
+  component: PropTypes.elementType.isRequired
+}
 
 export default PrivateRoute
