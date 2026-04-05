@@ -1,5 +1,5 @@
 import express from 'express'
-import userCtrl from '../controllers/user.controller'
+import profileCtrl from '../controllers/profile.controller'
 import authCtrl from '../controllers/auth.controller'
 import postCtrl from '../controllers/post.controller'
 
@@ -30,7 +30,7 @@ router.route('/api/posts/uncomment')
 router.route('/api/posts/:postId')
   .delete(authCtrl.requireSignin, postCtrl.isPoster, postCtrl.remove)
 
-router.param('userId', userCtrl.userByID)
+router.param('userId', profileCtrl.userByID)
 router.param('postId', postCtrl.postByID)
 
 export default router
