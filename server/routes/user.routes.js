@@ -1,34 +1,36 @@
 import express from 'express'
-import userCtrl from '../controllers/user.controller'
 import authCtrl from '../controllers/auth.controller'
+import profileCtrl from '../controllers/profile.controller'
+import followCtrl from '../controllers/follow.controller'
+import peopleCtrl from '../controllers/people.controller'
 
 const router = express.Router()
 
 router.route('/api/users')
-  .get(userCtrl.list)
-  .post(userCtrl.signupRequest)
+  .get(profileCtrl.list)
+  .post(authCtrl.signupRequest)
 
 router.route('/api/users/verify-email')
-  .post(userCtrl.verifyEmailAndSignup)
+  .post(authCtrl.verifyEmailAndSignup)
 
 router.route('/api/users/photo/:userId')
-  .get(userCtrl.photo, userCtrl.defaultPhoto)
+  .get(profileCtrl.photo, profileCtrl.defaultPhoto)
 router.route('/api/users/defaultphoto')
-  .get(userCtrl.defaultPhoto)
+  .get(profileCtrl.defaultPhoto)
 
 router.route('/api/users/follow')
-    .put(authCtrl.requireSignin, userCtrl.addFollowing, userCtrl.addFollower)
+    .put(authCtrl.requireSignin, followCtrl.addFollowing, followCtrl.addFollower)
 router.route('/api/users/unfollow')
-    .put(authCtrl.requireSignin, userCtrl.removeFollowing, userCtrl.removeFollower)
+    .put(authCtrl.requireSignin, followCtrl.removeFollowing, followCtrl.removeFollower)
 
 router.route('/api/users/findpeople/:userId')
-   .get(authCtrl.requireSignin, userCtrl.findPeople)
+   .get(authCtrl.requireSignin, peopleCtrl.findPeople)
 
 router.route('/api/users/:userId')
-  .get(authCtrl.requireSignin, userCtrl.read)
-  .put(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.update)
-  .delete(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.remove)
+  .get(authCtrl.requireSignin, profileCtrl.read)
+  .put(authCtrl.requireSignin, authCtrl.hasAuthorization, profileCtrl.update)
+  .delete(authCtrl.requireSignin, authCtrl.hasAuthorization, profileCtrl.remove)
 
-router.param('userId', userCtrl.userByID)
+router.param('userId', profileCtrl.userByID)
 
 export default router
