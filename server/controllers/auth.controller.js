@@ -4,14 +4,14 @@ import jwt from 'jsonwebtoken'
 import expressJwt from 'express-jwt'
 import config from './../../config/config'
 import errorHandler from './../helpers/dbErrorHandler'
-import { sanitizeString } from './../helpers/sanitize'
 import { sendVerificationEmail } from '../helpers/email'
 import {
-  CODE_EXPIRY_MINUTES,
-  generateVerificationCode,
-  generateVerificationToken,
+  buildPendingSignup,
+  ensureEmailNotTaken,
   hashPasswordWithSalt,
-  parseVerifyEmailInput
+  parseVerifyEmailInput,
+  persistPendingSignup,
+  validateSignupRequest
 } from '../services/user.service'
 
 const signin = async (req, res) => {
@@ -78,40 +78,30 @@ const hasAuthorization = (req, res, next) => {
  * Request signup: create pending signup, send 2FA code to email, return verification token.
  */
 const signupRequest = async (req, res) => {
-  const { name, email, password } = req.body || {}
-  if (!name || !email || !password) {
-    return res.status(400).json({ error: 'Name, email and password are required.' })
+  const validated = validateSignupRequest(req.body)
+  if (!validated.ok) {
+    return res.status(400).json({ error: validated.error })
   }
 
   try {
-    const existing = await User.findOne({ email: email.trim().toLowerCase() })
-    if (existing) {
+    if (!(await ensureEmailNotTaken(validated.email))) {
       return res.status(400).json({ error: 'Email already exists.' })
     }
 
-    const { salt, hashed_password } = hashPasswordWithSalt(password)
-    const verificationCode = generateVerificationCode()
-    const verificationToken = generateVerificationToken()
-    const expiresAt = new Date(Date.now() + CODE_EXPIRY_MINUTES * 60 * 1000)
-
-    await PendingSignup.deleteMany({ email: email.trim().toLowerCase() })
-
-    const pending = new PendingSignup({
-      name: sanitizeString(name.trim()),
-      email: email.trim().toLowerCase(),
-      hashed_password,
+    const { salt, hashed_password } = hashPasswordWithSalt(validated.password)
+    const pending = buildPendingSignup({
+      name: validated.name,
+      email: validated.email,
       salt,
-      verificationCode,
-      verificationToken,
-      expiresAt
+      hashed_password
     })
-    await pending.save()
+    await persistPendingSignup(validated.email, pending)
 
-    const emailResult = await sendVerificationEmail(pending.email, verificationCode)
+    const emailResult = await sendVerificationEmail(pending.email, pending.verificationCode)
     if (!emailResult.success) {
       if (config.env === 'development' && !config.smtpUser) {
         console.log('-----------------------------------------------------------')
-        console.log('DEV: Email could not be sent. Use this verification code:', verificationCode)
+        console.log('DEV: Email could not be sent. Use this verification code:', pending.verificationCode)
         console.log('-----------------------------------------------------------')
       } else {
         await pending.remove()
@@ -121,7 +111,7 @@ const signupRequest = async (req, res) => {
 
     return res.status(200).json({
       message: 'Verification code sent to your email.',
-      verificationToken
+      verificationToken: pending.verificationToken
     })
   } catch (err) {
     console.error('Signup error:', err)
