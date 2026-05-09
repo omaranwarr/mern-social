@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography'
 import Edit from '@material-ui/icons/Edit'
 import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
-import auth from './../auth/auth-helper'
+import { useAuth } from './../auth/AuthContext'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './../user/FollowProfileButton'
@@ -46,7 +46,7 @@ export default function Profile({ match }) {
     following: false
   })
   const [posts, setPosts] = useState([])
-  const jwt = auth.isAuthenticated()
+  const jwt = useAuth()
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -125,7 +125,7 @@ export default function Profile({ match }) {
               <Avatar src={photoUrl} className={classes.bigAvatar}/>
             </ListItemAvatar>
             <ListItemText primary={values.user.name} secondary={values.user.email}/> {
-             auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id
+             jwt.user && jwt.user._id == values.user._id
              ? (<ListItemSecondaryAction>
                   <Link to={"/user/edit/" + values.user._id}>
                     <IconButton aria-label="Edit" color="primary">
