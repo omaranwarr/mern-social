@@ -18,6 +18,7 @@ import {Redirect, Link} from 'react-router-dom'
 import FollowProfileButton from './../user/FollowProfileButton'
 import ProfileTabs from './../user/ProfileTabs'
 import {listByUser} from './../post/api-post.js'
+import { PostListProvider, usePostList } from './../post/PostListContext'
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -38,14 +39,14 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Profile({ match }) {
+function ProfileWithList ({ match }) {
   const classes = useStyles()
   const [values, setValues] = useState({
     user: {following:[], followers:[]},
     redirectToSignin: false,
     following: false
   })
-  const [posts, setPosts] = useState([])
+  const { posts, setPosts, removePost } = usePostList()
   const jwt = useAuth()
 
   useEffect(() => {
@@ -70,10 +71,10 @@ export default function Profile({ match }) {
   }, [match.params.userId])
   
   const checkFollow = (user) => {
-    const match = user.followers.some((follower)=> {
+    const matchFollower = user.followers.some((follower)=> {
       return follower._id == jwt.user._id
     })
-    return match
+    return matchFollower
   }
   const clickFollowButton = (callApi) => {
     callApi({
@@ -100,12 +101,6 @@ export default function Profile({ match }) {
         setPosts(data)
       }
     })
-  }
-  const removePost = (post) => {
-    const updatedPosts = posts
-    const index = updatedPosts.indexOf(post)
-    updatedPosts.splice(index, 1)
-    setPosts(updatedPosts)
   }
 
     const photoUrl = values.user._id
@@ -143,9 +138,15 @@ export default function Profile({ match }) {
               new Date(values.user.created)).toDateString()}/>
           </ListItem>
         </List>
-        <ProfileTabs user={values.user} posts={posts} removePostUpdate={removePost}/>
+        <ProfileTabs user={values.user} posts={posts} removePostUpdate={(post) => removePost(post._id)}/>
       </Paper>
     )
 }
 
-
+export default function Profile (props) {
+  return (
+    <PostListProvider>
+      <ProfileWithList {...props} />
+    </PostListProvider>
+  )
+}
