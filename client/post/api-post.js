@@ -1,10 +1,12 @@
+import { getAuthHeadersFromCredentials } from '../auth/authStrategy'
+
 const create = async (params, credentials, post) => {
   try {
     let response = await fetch('/api/posts/new/'+ params.userId, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: post
     })
@@ -21,7 +23,7 @@ const listByUser = async (params, credentials) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       }
     })
     return await response.json()
@@ -38,7 +40,7 @@ const listNewsFeed = async (params, credentials, signal) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       }
     })    
     return await response.json()
@@ -54,7 +56,7 @@ const remove = async (params, credentials) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       }
     })
     return await response.json()
@@ -71,7 +73,7 @@ const like = async (params, credentials, postId) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: JSON.stringify({userId:params.userId, postId: postId})
     })
@@ -89,7 +91,7 @@ const unlike = async (params, credentials, postId) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: JSON.stringify({userId:params.userId, postId: postId})
     })
@@ -107,7 +109,7 @@ const comment = async (params, credentials, postId, comment) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: JSON.stringify({userId:params.userId, postId: postId, comment: comment})
     })
@@ -125,7 +127,7 @@ const uncomment = async (params, credentials, postId, comment) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: JSON.stringify({userId:params.userId, postId: postId, comment: comment})
     })

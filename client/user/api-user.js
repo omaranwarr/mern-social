@@ -1,3 +1,5 @@
+import { getAuthHeadersFromCredentials } from '../auth/authStrategy'
+
 const create = async (user) => {
   try {
     let response = await fetch('/api/users', {
@@ -54,7 +56,7 @@ const read = async (params, credentials, signal) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       }
   })
     return await response.json()
@@ -69,7 +71,7 @@ const update = async (params, credentials, user) => {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: user
     })
@@ -86,7 +88,7 @@ const remove = async (params, credentials) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       }
     })
     return await response.json()
@@ -102,7 +104,7 @@ const follow = async (params, credentials, followId) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: JSON.stringify({userId:params.userId, followId: followId})
     })
@@ -119,7 +121,7 @@ const unfollow = async (params, credentials, unfollowId) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       },
       body: JSON.stringify({userId:params.userId, unfollowId: unfollowId})
     })
@@ -137,7 +139,7 @@ const findPeople = async (params, credentials, signal) => {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.t
+        ...getAuthHeadersFromCredentials(credentials)
       }
     })    
     return await response.json()
