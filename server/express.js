@@ -6,6 +6,7 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 import Template from './../template'
+import * as logger from './helpers/logger'
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
 import postRoutes from './routes/post.routes'
@@ -44,7 +45,7 @@ app.use((req, res, next) => {
   const start = Date.now()
   res.on('finish', () => {
     const duration = Date.now() - start
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`)
+    logger.info(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`)
   })
   next()
 })
@@ -85,7 +86,7 @@ app.use((err, req, res, next) => {
     res.status(401).json({"error" : err.name + ": " + err.message})
   }else if (err) {
     res.status(400).json({"error" : err.name + ": " + err.message})
-    console.log(err)
+    logger.error(err)
   }
 })
 
