@@ -7,6 +7,7 @@ import { useAuth } from './../auth/AuthContext'
 import PostList from './PostList'
 import {listNewsFeed} from './api-post.js'
 import NewPost from './NewPost'
+import { PostListProvider, usePostList } from './PostListContext'
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -23,9 +24,10 @@ const useStyles = makeStyles(theme => ({
     minHeight: 330
   }
 }))
-export default function Newsfeed () {
+
+function NewsfeedWithList () {
   const classes = useStyles()
-  const [posts, setPosts] = useState([])
+  const { posts, setPosts, addPost, removePost } = usePostList()
   const jwt = useAuth()
 
   useEffect(() => {
@@ -49,28 +51,23 @@ export default function Newsfeed () {
 
   }, [])
 
-  const addPost = (post) => {
-    const updatedPosts = [...posts]
-    updatedPosts.unshift(post)
-    setPosts(updatedPosts)
-  }
-  const removePost = (post) => {
-    const updatedPosts = [...posts]
-    const index = updatedPosts.indexOf(post)
-    updatedPosts.splice(index, 1)
-    setPosts(updatedPosts)
-  }
-
-    return (
-      <Card className={classes.card}>
-        <Typography type="title" className={classes.title}>
-          Newsfeed
-        </Typography>
-        <Divider/>
-        <NewPost addUpdate={addPost}/>
-        <Divider/>
-        <PostList removeUpdate={removePost} posts={posts}/>
-      </Card>
-    )
+  return (
+    <Card className={classes.card}>
+      <Typography type="title" className={classes.title}>
+        Newsfeed
+      </Typography>
+      <Divider/>
+      <NewPost addUpdate={addPost}/>
+      <Divider/>
+      <PostList removeUpdate={(post) => removePost(post._id)} posts={posts}/>
+    </Card>
+  )
 }
 
+export default function Newsfeed () {
+  return (
+    <PostListProvider>
+      <NewsfeedWithList />
+    </PostListProvider>
+  )
+}
