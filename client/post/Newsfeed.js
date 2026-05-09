@@ -3,7 +3,7 @@ import {makeStyles} from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
-import auth from './../auth/auth-helper'
+import { useAuth } from './../auth/AuthContext'
 import PostList from './PostList'
 import {listNewsFeed} from './api-post.js'
 import NewPost from './NewPost'
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 export default function Newsfeed () {
   const classes = useStyles()
   const [posts, setPosts] = useState([])
-  const jwt = auth.isAuthenticated()
+  const jwt = useAuth()
 
   useEffect(() => {
     const abortController = new AbortController()

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import auth from './../auth/auth-helper'
+import { useAuth } from './../auth/AuthContext'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Post (props){
   const classes = useStyles()
-  const jwt = auth.isAuthenticated()
+  const jwt = useAuth()
   const checkLike = (likes) => {
     let match = likes.indexOf(jwt.user._id) !== -1
     return match
@@ -107,7 +107,7 @@ export default function Post (props){
             avatar={
               <Avatar src={'/api/users/photo/'+props.post.postedBy._id}/>
             }
-            action={props.post.postedBy._id === auth.isAuthenticated().user._id &&
+            action={props.post.postedBy._id === jwt.user._id &&
               <IconButton onClick={deletePost}>
                 <DeleteIcon />
               </IconButton>
